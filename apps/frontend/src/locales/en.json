@@ -1,0 +1,253 @@
+{
+  "appName": "BM Ecosystem",
+  "sidebar": {
+    "overview": "Overview",
+    "intro": "Intro",
+    "platforms": "Platforms",
+    "links": "Links",
+    "gitRepos": "Git Repository Links",
+    "platformItems": {
+      "admin": "Admin Panel",
+      "callcenter": "Call Center",
+      "merchantPanel": "Merchant Panel",
+      "corporate": "Corporate Panel",
+      "customer": "BM-Customer-ET",
+      "driver": "BM-Driver-ET",
+      "merchantApp": "Merchant App"
+    }
+  },
+  "overview": {
+    "breadcrumb": "Overview",
+    "title": "BM Ecosystem — Project Overview",
+    "calloutHeader": "📖 WHAT YOU'LL FIND HERE",
+    "calloutItems": [
+      "Project introduction and architecture overview",
+      "Resource links and documentation references",
+      "Git repository links for every platform"
+    ],
+    "aboutHeading": "About This Documentation",
+    "aboutText": "This documentation serves as the central reference for the **BM Ecosystem** — a unified full-stack delivery and e-commerce platform. Use the sidebar navigation to explore project overview, platform documentation, feature requests archive, active bug tracking, and deployment guides.",
+    "navigateHeading": "How to Navigate",
+    "navigateText": "The sidebar on the left organizes all content into six main sections. Click on any section header to expand its sub-items. Select individual features under **Platform Documentation** to view specific spec details, or browse **Active Work & Bug Reporting** to see current sprint tasks.",
+    "sectionsHeading": "Sections",
+    "sectionsList": [
+      { "bold": "1. Overview", "text": "— Project introduction, external resources, and source code repositories" },
+      { "bold": "2. Platform Documentation", "text": "— In-depth specs, Figma designs, and sub-task logs for all seven applications" },
+      { "bold": "3. Feature Requests", "text": "— Historical and completed feature request logs per platform" },
+      { "bold": "4. Active Work & Bug Reporting", "text": "— Real-time tracking of active sprints, open bugs, and in-progress features" },
+      { "bold": "5. QA", "text": "— User story validation, test case tracking, and quality assurance across all platforms" },
+      { "bold": "6. All Other Docs", "text": "— Deployment checklists, supplementary system specs, and API references" }
+    ]
+  },
+  "intro": {
+    "breadcrumb": "Intro",
+    "title": "BM Ecosystem: Unified Full-Stack Project",
+    "calloutHeader": "📋 PROJECT OVERVIEW",
+    "calloutItems": [
+      "A unified full-stack delivery and e-commerce ecosystem",
+      "Multiple client-facing and admin platforms",
+      "Shared backend infrastructure with microservices",
+      "Real-time tracking, payment, and communication systems"
+    ],
+    "introHeading": "Introduction",
+    "introText1": "Welcome to the **BM Ecosystem** project documentation. This document provides a comprehensive overview of the entire platform, its architecture, and the individual applications that make up the ecosystem.",
+    "introText2": "The BM Ecosystem is a **unified full-stack delivery and e-commerce platform** designed to serve multiple stakeholders — from end customers placing orders, to merchants managing their storefronts, drivers handling deliveries, corporate clients managing bulk logistics, and administrators overseeing the entire operation.",
+    "archHeading": "Architecture Overview",
+    "archText": "The ecosystem is built around a shared backend infrastructure that supports multiple frontend applications. Each platform is purpose-built for its target audience while maintaining consistency in design language, API patterns, and data flow. The architecture follows a monorepo structure with dedicated apps for each platform, shared libraries for common utilities, and a centralized API layer.",
+    "techHeading": "Technology Stack",
+    "techIntro": "Across the ecosystem, the following core technologies are used:",
+    "techList": [
+      { "bold": "Frontend (Web):", "text": "Next.js 14+, React, Redux Toolkit, SCSS Modules" },
+      { "bold": "Frontend (Mobile):", "text": "React Native / Expo, Expo Router" },
+      { "bold": "Backend:", "text": "Node.js, Express, PostgreSQL, Prisma ORM" },
+      { "bold": "Real-time:", "text": "Socket.IO for live tracking and notifications" },
+      { "bold": "Infrastructure:", "text": "Docker, Docker Compose, Nginx reverse proxy" },
+      { "bold": "Maps & Location:", "text": "Google Maps Platform APIs" }
+    ]
+  },
+  "platformsOverview": {
+    "breadcrumb": "Platforms",
+    "title": "Platforms",
+    "calloutHeader": "🏗️ ECOSYSTEM APPS",
+    "calloutItems": [
+      "7 platforms spanning web and mobile",
+      "4 web applications + 3 mobile applications",
+      "Shared backend infrastructure and design system"
+    ],
+    "overviewText": "The BM ecosystem is composed of **seven distinct platforms**, each purpose-built for a specific stakeholder group. These platforms share a common backend, design language, and communication protocols, ensuring a cohesive experience across the entire ecosystem.",
+    "webHeading": "Web Applications",
+    "webList": [
+      { "bold": "Admin Panel", "text": "— Main control hub for platform management, configurations, and super-admin controls." },
+      { "bold": "Call Center", "text": "— Operational hub for customer support, real-time agent booking assistance, and escalation resolution." },
+      { "bold": "Merchant Panel", "text": "— Web interface for e-commerce merchants to manage products, view sales payouts, and process storefront updates." },
+      { "bold": "Corporate Panel", "text": "— Dedicated portal for business clients, companies, and cooperatives to manage bulk orders and billing." }
+    ],
+    "mobileHeading": "Mobile Applications",
+    "mobileList": [
+      { "bold": "BM-Customer-ET", "text": "— End-user mobile client for ordering, deliveries, tracking, and payments." },
+      { "bold": "BM-Driver-ET", "text": "— Mobile tool for delivery riders to accept dispatch offers, optimize routes, and log delivery proof." },
+      { "bold": "Merchant App", "text": "— Fast, mobile-optimized counterpart for e-commerce store operations and order fulfillment alerts." }
+    ]
+  },
+  "platforms": {
+    "platform-admin": {
+      "name": "Admin Panel",
+      "breadcrumb": "Admin Panel",
+      "description": "Main control hub for platform management, configurations, and super-admin controls.",
+      "purpose": "The Admin Panel serves as the central command center for the entire BM ecosystem. Super administrators use this platform to manage all aspects of the operation including user management, system configuration, financial oversight, and operational monitoring.",
+      "keyFeatures": [
+        "Dashboard Analytics — KPI stat cards, revenue charts, and real-time operational metrics",
+        "User Registration & OTP Auth — Secure verification views for all platform users",
+        "Global System Audit Logs — Complete audit trail UI for tracking all system operations",
+        "Delivery Management — End-to-end delivery lifecycle management",
+        "Corporate Account Management — Handling business clients and bulk order configurations",
+        "Call Center Oversight — Monitoring and managing support agent activities"
+      ],
+      "type": "Web Application",
+      "status": "Active Development"
+    },
+    "platform-callcenter": {
+      "name": "Call Center",
+      "breadcrumb": "Call Center",
+      "description": "Operational hub for customer support, real-time agent booking assistance, and escalation resolution.",
+      "purpose": "The Call Center platform is designed for customer support agents who handle incoming queries, assist with bookings, resolve delivery issues, and manage escalation workflows. It provides real-time visibility into active orders and driver locations to enable efficient support.",
+      "keyFeatures": [
+        "Agent Dashboard — Real-time call queue management and agent status tracking",
+        "Escalation Management — Priority-based escalation workflows with SLA tracking",
+        "Live Order Tracking — Real-time map view of active deliveries for support context",
+        "Customer Communication — Integrated messaging and call logging",
+        "Performance Analytics — Agent performance metrics and resolution time tracking"
+      ],
+      "type": "Web Application",
+      "status": "Active Development"
+    },
+    "platform-merchant-panel": {
+      "name": "Merchant Panel",
+      "breadcrumb": "Merchant Panel",
+      "description": "Web interface for e-commerce merchants to manage products, view sales payouts, and process storefront updates.",
+      "purpose": "The Merchant Panel provides e-commerce merchants with a comprehensive web interface to manage their entire storefront operation. Merchants can handle product listings, process orders, track sales performance, manage payouts, and update their store presence — all from a single unified dashboard.",
+      "keyFeatures": [
+        "Product Management — Full CRUD operations for products with bulk image upload",
+        "Payout Dashboard — Monthly payout reports with detailed transaction breakdowns",
+        "Order Processing — Real-time order queue with accept/reject workflows",
+        "Store Analytics — Sales trends, popular items, and customer insights",
+        "Storefront Customization — Theme and layout management for the merchant's online presence"
+      ],
+      "type": "Web Application",
+      "status": "Active Development"
+    },
+    "platform-corporate": {
+      "name": "Corporate Panel",
+      "breadcrumb": "Corporate Panel",
+      "description": "Dedicated portal for business clients, companies, and cooperatives to manage bulk orders, logistics corporate billing, and member access.",
+      "purpose": "The Corporate Panel is a specialized portal built for business clients and cooperatives who require bulk order management, corporate billing, and multi-member access control. It streamlines logistics for organizations that need to manage recurring deliveries, track expenses across departments, and maintain detailed billing records.",
+      "keyFeatures": [
+        "Bulk Order Management — Batch upload and processing of large order volumes",
+        "Role Permission Matrix — Multi-user access controls with hierarchical permissions",
+        "Corporate Billing — Consolidated invoicing and department-level expense tracking",
+        "Member Management — Employee/member onboarding and access provisioning",
+        "Logistics Scheduling — Recurring delivery schedule management"
+      ],
+      "type": "Web Application",
+      "status": "Active Development"
+    },
+    "platform-customer": {
+      "name": "BM-Customer-ET",
+      "breadcrumb": "BM-Customer-ET",
+      "description": "End-user facing mobile client for ordering, deliveries, tracking, and payments.",
+      "purpose": "BM-Customer-ET is the primary customer-facing mobile application. It provides end users with a seamless experience for browsing merchants, placing orders, tracking deliveries in real-time, managing payments, and communicating with support. The app is designed for the Ethiopian market with localization support.",
+      "keyFeatures": [
+        "User Registration & OTP Auth — Phone-based verification for the Ethiopian market",
+        "Order Real-time Tracking — Live map tracking with driver location and ETA updates",
+        "Merchant Discovery — Browse, search, and filter merchants by category and location",
+        "Payment Integration — Multiple payment method support including mobile money",
+        "Order History — Complete order history with reorder functionality",
+        "Push Notifications — Real-time delivery status updates and promotional notifications"
+      ],
+      "type": "Mobile Application (iOS & Android)",
+      "status": "Active Development"
+    },
+    "platform-driver": {
+      "name": "BM-Driver-ET",
+      "breadcrumb": "BM-Driver-ET",
+      "description": "Mobile tool for delivery riders to accept dispatch offers, optimize routing paths, and log delivery proof.",
+      "purpose": "BM-Driver-ET is the delivery rider application that enables drivers to receive and manage delivery assignments. It provides optimized routing, real-time navigation, delivery proof logging, and earnings tracking. The app is designed for reliability even in low-connectivity areas.",
+      "keyFeatures": [
+        "Dispatch Accept/Reject — Push notification-based delivery offer flow with accept/reject",
+        "Delivery Proof Logging — Photo upload and digital signature capture at delivery",
+        "Route Optimization — Google Maps integrated navigation with optimized routes",
+        "Earnings Dashboard — Daily/weekly/monthly earnings breakdown",
+        "Availability Toggle — Online/offline status management",
+        "Order Queue — Multiple active order management with priority sorting"
+      ],
+      "type": "Mobile Application (iOS & Android)",
+      "status": "Active Development"
+    },
+    "platform-merchant-app": {
+      "name": "Merchant App",
+      "breadcrumb": "Merchant App",
+      "description": "Fast, mobile-optimized counterpart for e-commerce store operations and order fulfillment alerts.",
+      "purpose": "The Merchant App is the mobile companion to the Merchant Panel, providing merchants with on-the-go access to their store operations. It focuses on real-time order alerts, quick order processing, and essential store management features optimized for mobile use.",
+      "keyFeatures": [
+        "Instant Order Dispatches — Real-time order notifications with quick accept/reject",
+        "Order Fulfillment Alerts — Push notifications for new orders and status changes",
+        "Quick Product Updates — Fast product availability toggling and price updates",
+        "Daily Sales Summary — At-a-glance revenue and order count for the day",
+        "Store Status Toggle — Quick online/offline store status management"
+      ],
+      "type": "Mobile Application (iOS & Android)",
+      "status": "Active Development"
+    }
+  },
+  "links": {
+    "breadcrumb": "Links",
+    "title": "Links",
+    "calloutHeader": "🔗 RESOURCES",
+    "calloutItems": [
+      "Documentation, API collections, and design resources",
+      "All links are internal to the BM organization"
+    ],
+    "docsHeading": "Documentation",
+    "docsText": "The project documentation is maintained across several platforms to ensure up-to-date references for all team members. Below are the key resource links for the BM ecosystem.",
+    "docsList": [
+      { "bold": "API Documentation", "text": "— Comprehensive API reference for all backend endpoints, including request/response schemas and authentication flows." },
+      { "bold": "Postman API Collection", "text": "— Pre-configured Postman collection with environment variables for local, staging, and production testing." },
+      { "bold": "Design System (Figma)", "text": "— Shared Figma design system with component library, color tokens, and page layouts for all platforms." },
+      { "bold": "Architecture Diagrams", "text": "— System architecture, database schemas, and infrastructure topology documentation." }
+    ],
+    "commHeading": "Communication",
+    "commList": [
+      { "bold": "Slack Workspace", "text": "— Primary team communication channel with dedicated channels per platform." },
+      { "bold": "Jira Board", "text": "— Sprint planning, bug tracking, and feature request management." },
+      { "bold": "Confluence Wiki", "text": "— Knowledge base with onboarding guides, coding standards, and deployment procedures." }
+    ]
+  },
+  "gitRepos": {
+    "breadcrumb": "Git Repository Links",
+    "title": "Git Repository Links",
+    "calloutHeader": "📦 REPOSITORIES",
+    "calloutItems": [
+      "All source code is hosted on GitHub under the BM organization",
+      "Each platform has its own repository or exists within the monorepo"
+    ],
+    "webHeading": "Web Platform Repositories",
+    "webList": [
+      { "label": "Admin Panel Git Repo:", "url": "github.com/bm-ecosystem/admin-panel" },
+      { "label": "Call Center Git Repo:", "url": "github.com/bm-ecosystem/call-center" },
+      { "label": "Merchant Panel Git Repo:", "url": "github.com/bm-ecosystem/merchant-panel" },
+      { "label": "Corporate Panel Git Repo:", "url": "github.com/bm-ecosystem/corporate-panel" }
+    ],
+    "mobileHeading": "Mobile App Repositories",
+    "mobileList": [
+      { "label": "BM-Customer-ET Git Repo:", "url": "github.com/bm-ecosystem/customer-app-et" },
+      { "label": "BM-Driver-ET Git Repo:", "url": "github.com/bm-ecosystem/driver-app-et" },
+      { "label": "Merchant App Git Repo:", "url": "github.com/bm-ecosystem/merchant-app" }
+    ],
+    "sharedHeading": "Shared / Infrastructure Repositories",
+    "sharedList": [
+      { "label": "Backend API:", "url": "github.com/bm-ecosystem/backend-api" },
+      { "label": "Shared Libraries:", "url": "github.com/bm-ecosystem/shared-libs" },
+      { "label": "Infrastructure (Docker / CI):", "url": "github.com/bm-ecosystem/infra" }
+    ]
+  }
+}
