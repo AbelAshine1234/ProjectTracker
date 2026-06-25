@@ -1,0 +1,38 @@
+import * as projectService from '../services/project.js';
+
+export async function getAll(req, res) {
+  const projects = await projectService.getAll();
+  res.json(projects);
+}
+
+export async function getById(req, res) {
+  const project = await projectService.getById(Number(req.params.id));
+  if (!project) return res.status(404).json({ error: 'Project not found' });
+  res.json(project);
+}
+
+export async function create(req, res) {
+  const project = await projectService.create(req.body, req.user.id);
+  res.status(201).json(project);
+}
+
+export async function update(req, res) {
+  const project = await projectService.update(Number(req.params.id), req.body);
+  res.json(project);
+}
+
+export async function remove(req, res) {
+  await projectService.remove(Number(req.params.id));
+  res.status(204).end();
+}
+
+export async function addMember(req, res) {
+  const { userId, role } = req.body;
+  const member = await projectService.addMember(Number(req.params.id), userId, role);
+  res.status(201).json(member);
+}
+
+export async function removeMember(req, res) {
+  await projectService.removeMember(Number(req.params.memberId));
+  res.status(204).end();
+}

@@ -19,6 +19,16 @@ docker-compose up --build
 - **Frontend UI:** `http://localhost:3000`
 - **Backend API:** `http://localhost:5000`
 
+### First-time Setup
+
+After starting the containers, seed the admin user:
+
+```bash
+docker compose exec backend node seedAdmin.js
+```
+
+Default admin credentials: `admin` / `admin123`
+
 ### Included Features
 - Completely styled based on `style.md` and `physicsandanimation.md`.
 - Implemented common components (`<DataTable/>`, `<Modal/>`, `<StatCard/>`, etc.)

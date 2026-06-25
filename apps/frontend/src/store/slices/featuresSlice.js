@@ -1,12 +1,49 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { apiFetch } from '@/lib/api';
+
+// ─── Async Thunks ────────────────────────────────────────────
+
+export const fetchFeatureRequests = createAsyncThunk(
+  'features/fetchFeatureRequests',
+  async (platformId) => {
+    return await apiFetch(`/feature-requests/platform/${platformId}`);
+  }
+);
+
+export const createFeatureRequest = createAsyncThunk(
+  'features/createFeatureRequest',
+  async (featureData) => {
+    return await apiFetch('/feature-requests', {
+      method: 'POST',
+      body: JSON.stringify(featureData),
+    });
+  }
+);
+
+export const updateFeatureRequestAsync = createAsyncThunk(
+  'features/updateFeatureRequestAsync',
+  async ({ id, ...data }) => {
+    return await apiFetch(`/feature-requests/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+);
+
+export const deleteFeatureRequest = createAsyncThunk(
+  'features/deleteFeatureRequest',
+  async (id) => {
+    await apiFetch(`/feature-requests/${id}`, { method: 'DELETE' });
+    return id;
+  }
+);
+
+// ─── Slice ───────────────────────────────────────────────────
 
 const initialState = {
-  items: [
-    { id: 1, title: 'Global System Audit Logs Dashboard', platform: 'BM Admin Panel', platformId: 1, requestedBy: 'Internal Operations', status: 'pending', createdAt: '2026-06-18' },
-    { id: 2, title: 'Export CSV Monthly Payout Reports', platform: 'Merchant Panel', platformId: 3, requestedBy: 'Merchant Team', status: 'in-progress', createdAt: '2026-06-15' },
-    { id: 3, title: 'Multi-user Role Permission Matrix inside Companies', platform: 'Corporate Panel', platformId: 4, requestedBy: 'Corporate Clients', status: 'pending', createdAt: '2026-06-19' },
-    { id: 4, title: 'Driver Earnings Breakdown Screen', platform: 'BM-Driver-ET', platformId: 6, requestedBy: 'Driver Ops', status: 'review', createdAt: '2026-06-10' },
-  ],
+  items: [],
+  status: 'idle',
+  error: null,
 };
 
 const featuresSlice = createSlice({
@@ -21,6 +58,30 @@ const featuresSlice = createSlice({
     removeFeatureRequest(state, action) {
       state.items = state.items.filter(f => f.id !== action.payload);
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchFeatureRequests.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchFeatureRequests.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.items = action.payload;
+      })
+      .addCase(fetchFeatureRequests.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(createFeatureRequest.fulfilled, (state, action) => {
+        state.items.push(action.payload);
+      })
+      .addCase(updateFeatureRequestAsync.fulfilled, (state, action) => {
+        const idx = state.items.findIndex(f => f.id === action.payload.id);
+        if (idx !== -1) state.items[idx] = action.payload;
+      })
+      .addCase(deleteFeatureRequest.fulfilled, (state, action) => {
+        state.items = state.items.filter(f => f.id !== action.payload);
+      });
   },
 });
 

@@ -1,37 +1,28 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
-import { login } from '@/store/slices/uiSlice';
+import { loginUser } from '@/store/slices/uiSlice';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const users = useSelector(s => s.users.items);
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
+  
+  const { authStatus, authError, currentUser } = useSelector(s => s.ui);
+
+  useEffect(() => {
+    if (currentUser) {
+      router.push('/');
+    }
+  }, [currentUser, router]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
-
-    const user = users.find(
-      u => u.username.toLowerCase() === username.toLowerCase() && u.password === password
-    );
-
-    if (!user) {
-      setError('Invalid username or password');
-      return;
-    }
-
-    if (user.accountStatus !== 'active') {
-      setError('Account is suspended. Contact an administrator.');
-      return;
-    }
-
-    dispatch(login({ id: user.id, username: user.username, role: user.role }));
-    router.push('/');
+    dispatch(loginUser({ username, password }));
   };
 
   return (
@@ -43,7 +34,7 @@ export default function LoginPage() {
         </div>
 
         <form className="login-card__form" onSubmit={handleSubmit}>
-          {error && <div className="login-card__error">{error}</div>}
+          {authError && <div className="login-card__error">{authError}</div>}
 
           <div className="login-card__field">
             <label className="login-card__label">Username</label>
@@ -59,17 +50,27 @@ export default function LoginPage() {
 
           <div className="login-card__field">
             <label className="login-card__label">Password</label>
-            <input
-              className="login-card__input"
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="login-card__password-wrap">
+              <input
+                className="login-card__input login-card__input--password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="login-card__toggle-pw"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
-          <button className="login-card__btn" type="submit" disabled={!username || !password}>
-            Sign In
+          <button className="login-card__btn" type="submit" disabled={!username || !password || authStatus === 'loading'}>
+            {authStatus === 'loading' ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
       </div>

@@ -3,7 +3,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '@/store/slices/uiSlice';
-import { ChevronRight, ChevronLeft, LogOut } from 'lucide-react';
+import { saveEdit } from '@/store/slices/editDataSlice';
+import { ChevronRight, ChevronLeft, LogOut, Users } from 'lucide-react';
+import EditableField from '@/components/common/EditableField';
 import t from '@/locales/en.json';
 
 const sidebarData = [
@@ -212,19 +214,110 @@ function SidebarItem({ item, activeSection, onSelect, depth = 0 }) {
 
 export default function DocSidebar({ activeSection, onSelect, isWide, onToggleWide }) {
   const currentUser = useSelector(s => s.ui.currentUser);
+  const customPlatforms = useSelector(s => s.editData.customPlatforms || []);
+  const edits = useSelector(s => s.editData);
   const dispatch = useDispatch();
   const router = useRouter();
+  const isAdmin = currentUser?.role === 'ADMIN';
+
+  const platforms = useSelector(s => s.platforms.items);
+
+  const customDocItems = customPlatforms.map(p => ({
+    id: p.id,
+    label: p.data.name,
+  }));
+
+  const dynamicDocs = platforms.filter(Boolean).map(p => ({
+    id: `platform-${p.id}`,
+    label: p.name,
+    children: (p.features || []).map(f => ({
+      id: `feature-${f.id}`,
+      label: f.title || f.name || 'Unnamed Feature'
+    }))
+  }));
+
+  const dynamicQA = platforms.filter(Boolean).map(p => ({
+    id: `qa-platform-${p.id}`,
+    label: p.name,
+    // Add stories if we fetch them. For now just placeholder
+    children: [],
+  }));
+
+  const editableSidebarData = isAdmin
+    ? [
+        sidebarData[0], // overview
+        {
+          ...sidebarData[1], // Documentation
+          children: [
+            ...dynamicDocs,
+          ...customDocItems,
+        ],
+      },
+      {
+        ...sidebarData[2], // Feature Requests
+        children: platforms.filter(Boolean).map(p => ({ id: `fr-platform-${p.id}`, label: p.name }))
+        },
+        sidebarData[3], // Active work
+        {
+          ...sidebarData[4], // QA
+          children: [
+            { id: 'qa-landing', label: 'QA Overview' },
+            ...dynamicQA
+          ],
+        },
+        sidebarData[5], // Other docs
+        { id: 'user-management', label: 'User Management', defaultOpen: false },
+      ]
+    : [
+        sidebarData[0],
+        {
+          ...sidebarData[1],
+          children: dynamicDocs,
+        },
+        {
+          ...sidebarData[2],
+          children: platforms.filter(Boolean).map(p => ({ id: `fr-platform-${p.id}`, label: p.name }))
+        },
+        sidebarData[3],
+        {
+          ...sidebarData[4],
+          children: [
+            { id: 'qa-landing', label: 'QA Overview' },
+            ...dynamicQA
+          ],
+        },
+        sidebarData[5],
+      ];
 
   const handleLogout = () => {
     dispatch(logout());
     router.push('/login');
   };
 
+  const sidebarTitle = edits['sidebar.title'] || 'BM Ecosystem';
+  const sidebarSubtitle = edits['sidebar.subtitle'] || 'Full Project Documentation';
+
   return (
     <aside className="doc-sidebar">
       <div className="doc-sidebar__header">
-        <h2 className="doc-sidebar__title">BM Ecosystem</h2>
-        <span className="doc-sidebar__subtitle">Full Project Documentation</span>
+        <h2 className="doc-sidebar__title">
+          {isAdmin ? (
+            <EditableField
+              value={sidebarTitle}
+              onSave={v => dispatch(saveEdit({ key: 'sidebar.title', value: v }))}
+              editing={isAdmin}
+            />
+          ) : sidebarTitle}
+        </h2>
+        <span className="doc-sidebar__subtitle">
+          {isAdmin ? (
+            <EditableField
+              value={sidebarSubtitle}
+              onSave={v => dispatch(saveEdit({ key: 'sidebar.subtitle', value: v }))}
+              editing={isAdmin}
+            />
+          ) : sidebarSubtitle}
+        </span>
       </div>
 
       <button
@@ -236,7 +329,7 @@ export default function DocSidebar({ activeSection, onSelect, isWide, onToggleWi
       </button>
 
       <nav className="doc-sidebar__nav">
-        {sidebarData.map((item) => (
+        {editableSidebarData.map((item) => (
           <SidebarItem key={item.id} item={item} activeSection={activeSection} onSelect={onSelect} depth={0} />
         ))}
       </nav>
@@ -248,6 +341,15 @@ export default function DocSidebar({ activeSection, onSelect, isWide, onToggleWi
               <span className="doc-sidebar__user-name">{currentUser.username}</span>
               <span className="doc-sidebar__user-role">{currentUser.role}</span>
             </div>
+            {isAdmin && (
+              <button
+                className="doc-sidebar__footer-btn"
+                onClick={() => { onSelect('user-management'); }}
+                title="User Management"
+              >
+                <Users size={16} />
+              </button>
+            )}
             <button className="doc-sidebar__logout" onClick={handleLogout} title="Logout">
               <LogOut size={16} />
             </button>

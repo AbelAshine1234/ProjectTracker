@@ -1,0 +1,464 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ───────────────────────────── Users & Auth ─────────────────────────────
+
+model User {
+  id            Int      @id @default(autoincrement())
+  name          String
+  username      String   @unique
+  email         String?  @unique
+  password      String
+  role          String   @default("USER")
+  accountStatus String   @default("ACTIVE")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  projectMemberships ProjectMember[]
+  refreshTokens      RefreshToken[]
+  editHistory        EditHistory[]
+  docComments        DocComment[]   @relation("DocCommentAuthor")
+  subTasksRequested  SubTask[]       @relation("SubTaskRequestedBy")
+  subTasksDone       SubTask[]       @relation("SubTaskDoneBy")
+  featureRequests    FeatureRequest[] @relation("FeatureRequestRequestedBy")
+  qaStories          QAUserStory[]   @relation("QAStoryTester")
+  workItems          ActiveWorkItem[] @relation("WorkItemAssignee")
+  bugsReported       BugReport[]     @relation("BugReportedBy")
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ───────────────────────────── Project / Tenant ─────────────────────────
+
+model Project {
+  id          Int      @id @default(autoincrement())
+  name         String   @unique
+  slug         String   @unique
+  description  String   @default("")
+  intro        String   @default("")
+  architecture String   @default("")
+  aboutText    String   @default("")
+  navigateText String   @default("")
+  sectionsJson Json?
+  createdAt    DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members           ProjectMember[]
+  platforms         Platform[]
+  statuses          Status[]
+  severities        Severity[]
+  docPages          DocPage[]
+  editHistory       EditHistory[]
+  resourceLinks     ResourceLink[]
+  gitRepositories   GitRepository[]
+  supplementaryDocs SupplementaryDoc[]
+}
+
+model ProjectMember {
+  id        Int      @id @default(autoincrement())
+  projectId Int
+  userId    Int
+  role      String   @default("MEMBER")
+  createdAt DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([userId])
+}
+
+// ───────────────────── Configurable Status & Severity ───────────────────
+
+model Status {
+  id        Int      @id @default(autoincrement())
+  projectId Int
+  type      String
+  name      String
+  slug      String
+  color     String   @default("#6B7280")
+  order     Int      @default(0)
+  isDefault Boolean  @default(false)
+  isFinal   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project         Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  subTasks        SubTask[]
+  featureRequests FeatureRequest[]
+  qaStories       QAUserStory[]
+  workItems       ActiveWorkItem[]
+  bugReports      BugReport[]
+
+  @@unique([projectId, type, slug])
+  @@index([projectId, type])
+}
+
+model Severity {
+  id        Int      @id @default(autoincrement())
+  projectId Int
+  name      String
+  slug      String
+  color     String   @default("#EF4444")
+  order     Int      @default(0)
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project    Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  bugReports BugReport[]
+
+  @@unique([projectId, slug])
+  @@index([projectId])
+}
+
+// ─────────────────────────── Platforms & Features ───────────────────────
+
+model Platform {
+  id          Int      @id @default(autoincrement())
+  projectId   Int
+  name        String   @unique
+  slug        String   @unique
+  type        String   @default("web")
+  status      String   @default("active")
+  description String   @default("")
+  repoUrl     String   @default("")
+  figmaUrl    String   @default("")
+  postmanUrl  String   @default("")
+  customUrl   String   @default("")
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project         Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  features        Feature[]
+  featureRequests FeatureRequest[]
+  qaStories       QAUserStory[]
+  workItems       ActiveWorkItem[]
+  bugReports      BugReport[]
+  docPages        DocPage[]
+
+  @@index([projectId])
+}
+
+model Feature {
+  id          Int      @id @default(autoincrement())
+  projectId   Int
+  platformId  Int
+  title       String
+  description String   @default("")
+  color       String   @default("#764ABC")
+  order       Int      @default(0)
+  docPageId   Int?     @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  platform Platform  @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  docPage  DocPage?  @relation(fields: [docPageId], references: [id])
+  subTasks SubTask[]
+
+  @@index([platformId])
+  @@index([projectId])
+}
+
+model SubTask {
+  id            Int      @id @default(autoincrement())
+  projectId     Int
+  featureId     Int
+  title         String
+  requestedById Int?
+  doneById      Int?
+  devByDate     DateTime?
+  statusId      Int
+  addedToDocs   Boolean  @default(false)
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  feature     Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
+  requestedBy User?   @relation("SubTaskRequestedBy", fields: [requestedById], references: [id])
+  doneBy      User?   @relation("SubTaskDoneBy", fields: [doneById], references: [id])
+  status      Status  @relation(fields: [statusId], references: [id])
+
+  @@index([featureId])
+  @@index([projectId])
+}
+
+// ───────────────────────────── Feature Requests ────────────────────────
+
+model FeatureRequest {
+  id            Int      @id @default(autoincrement())
+  projectId     Int
+  platformId    Int
+  title         String
+  requestedById Int?
+  createdDate   DateTime @default(now())
+  targetDate    DateTime?
+  statusId      Int
+  description   String   @default("")
+  imageUrl      String   @default("")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  platform    Platform                 @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  requestedBy User?                    @relation("FeatureRequestRequestedBy", fields: [requestedById], references: [id])
+  status      Status                   @relation(fields: [statusId], references: [id])
+  criteria    ImplementationCriteria[]
+  mockups     MockupPreview[]
+
+  @@index([platformId])
+  @@index([projectId])
+}
+
+model ImplementationCriteria {
+  id               Int    @id @default(autoincrement())
+  featureRequestId Int
+  text             String
+  order            Int    @default(0)
+
+  featureRequest FeatureRequest @relation(fields: [featureRequestId], references: [id], onDelete: Cascade)
+
+  @@index([featureRequestId])
+}
+
+model MockupPreview {
+  id               Int    @id @default(autoincrement())
+  featureRequestId Int
+  title            String @default("")
+  variant          String @default("browser")
+  order            Int    @default(0)
+
+  featureRequest FeatureRequest  @relation(fields: [featureRequestId], references: [id], onDelete: Cascade)
+  elements       MockupElement[]
+
+  @@index([featureRequestId])
+}
+
+model MockupElement {
+  id              Int    @id @default(autoincrement())
+  mockupPreviewId Int
+  label           String
+  state           String @default("SUCCESS")
+  value           String @default("")
+  order           Int    @default(0)
+
+  mockup MockupPreview @relation(fields: [mockupPreviewId], references: [id], onDelete: Cascade)
+
+  @@index([mockupPreviewId])
+}
+
+// ───────────────────────────────────── QA ───────────────────────────────
+
+model QAUserStory {
+  id             Int      @id @default(autoincrement())
+  storyCode      String   @unique
+  title          String
+  platformId     Int
+  testerId       Int?
+  lastTested     DateTime?
+  statusId       Int
+  preconditions  String   @default("")
+  expectedResult String   @default("")
+  description    String   @default("")
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  platform Platform     @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  tester   User?        @relation("QAStoryTester", fields: [testerId], references: [id])
+  status   Status       @relation(fields: [statusId], references: [id])
+  steps    QATestStep[]
+
+  @@index([platformId])
+}
+
+model QATestStep {
+  id            Int    @id @default(autoincrement())
+  qaUserStoryId Int
+  stepNumber    Int
+  instruction   String
+
+  story QAUserStory @relation(fields: [qaUserStoryId], references: [id], onDelete: Cascade)
+
+  @@index([qaUserStoryId])
+}
+
+// ─────────────────────────── Active Work & Bugs ─────────────────────────
+
+model ActiveWorkItem {
+  id          Int      @id @default(autoincrement())
+  platformId  Int
+  title       String
+  assigneeId  Int?
+  statusId    Int
+  description String   @default("")
+  deadline    DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  platform Platform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  assignee User?    @relation("WorkItemAssignee", fields: [assigneeId], references: [id])
+  status   Status   @relation(fields: [statusId], references: [id])
+
+  @@index([platformId])
+}
+
+model BugReport {
+  id           Int      @id @default(autoincrement())
+  platformId   Int
+  title        String
+  severityId   Int
+  reportedById Int?
+  statusId     Int
+  description  String   @default("")
+  steps        String   @default("")
+  expectedFix  String   @default("")
+  errorLog     String   @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  platform    Platform        @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  reportedBy  User?           @relation("BugReportedBy", fields: [reportedById], references: [id])
+  severity    Severity        @relation(fields: [severityId], references: [id])
+  status      Status          @relation(fields: [statusId], references: [id])
+  attachments BugAttachment[]
+
+  @@index([platformId])
+}
+
+model BugAttachment {
+  id          Int      @id @default(autoincrement())
+  bugReportId Int
+  imageUrl    String
+  caption     String   @default("")
+  uploadedBy  String   @default("")
+  uploadedAt  DateTime @default(now())
+
+  bug BugReport @relation(fields: [bugReportId], references: [id], onDelete: Cascade)
+
+  @@index([bugReportId])
+}
+
+// ─────────────────────────── Docs, Comments, Audit ──────────────────────
+
+model DocPage {
+  id         Int      @id @default(autoincrement())
+  projectId  Int
+  title      String
+  slug       String   @unique
+  parentId   Int?
+  platformId Int?
+  content    String   @default("")
+  linkedType String?
+  linkedId   Int?
+  createdBy  String   @default("")
+  updatedBy  String   @default("")
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  project  Project     @relation(fields: [projectId], references: [id])
+  parent   DocPage?    @relation("DocPageTree", fields: [parentId], references: [id])
+  children DocPage[]   @relation("DocPageTree")
+  platform Platform?   @relation(fields: [platformId], references: [id])
+  feature  Feature?
+
+  @@index([parentId])
+  @@index([platformId])
+  @@index([projectId])
+}
+
+model DocComment {
+  id         Int      @id @default(autoincrement())
+  entityKey  String
+  authorId   Int?
+  authorName String   @default("")
+  text       String
+  isDeleted  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  author     User?    @relation("DocCommentAuthor", fields: [authorId], references: [id])
+
+  @@index([entityKey])
+}
+
+model EditHistory {
+  id            Int      @id @default(autoincrement())
+  projectId     Int
+  entityType    String
+  entityId      Int
+  editedById    Int?
+  changeSummary String   @default("")
+  editedAt      DateTime @default(now())
+
+  project  Project @relation(fields: [projectId], references: [id])
+  editedBy User?   @relation(fields: [editedById], references: [id])
+
+  @@index([projectId, entityType, entityId])
+}
+
+// ─────────────────────────── Link / Doc lists ──────────────────────────
+
+model ResourceLink {
+  id        Int      @id @default(autoincrement())
+  projectId Int
+  category  String
+  label     String
+  url       String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id])
+
+  @@index([projectId])
+}
+
+model GitRepository {
+  id        Int      @id @default(autoincrement())
+  projectId Int
+  category  String
+  name      String
+  url       String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id])
+
+  @@index([projectId])
+}
+
+model SupplementaryDoc {
+  id        Int      @id @default(autoincrement())
+  projectId Int
+  category  String
+  title     String
+  url       String   @default("")
+  stage     String   @default("DRAFT")
+  reviewed  Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id])
+
+  @@index([projectId])
+}

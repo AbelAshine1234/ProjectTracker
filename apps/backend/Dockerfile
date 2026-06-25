@@ -1,16 +1,18 @@
-FROM node:20-alpine
+FROM node:20-bookworm-slim
+
+RUN apt-get update && apt-get install -y openssl
 
 WORKDIR /app
 
-# Install dependencies
 COPY package.json package-lock.json* ./
 RUN npm install
 
-# Copy source
+COPY prisma/ ./prisma/
+RUN npx prisma generate
+
 COPY . .
 
 EXPOSE 5000
 ENV PORT=5000
 
-# Run the development server with watch mode
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "docker:start"]
