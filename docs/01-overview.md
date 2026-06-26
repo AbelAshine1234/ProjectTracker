@@ -22,13 +22,16 @@ docker compose up --build
 
 ### First-time Setup
 
-After starting the containers, seed the default ecosystem database (platforms, features, statuses, severities) and create the default admin user:
+After starting the containers, synchronize the database schema (creates tables), seed default ecosystem database values (platforms, features, statuses, severities), and create the default admin user:
 
 ```bash
-# 1. Seed base data & statuses
+# 1. Push the database schema (create tables)
+docker compose exec backend npx prisma db push
+
+# 2. Seed base data & statuses
 docker compose exec backend npm run db:seed
 
-# 2. Seed the admin user (admin / admin123)
+# 3. Seed the admin user (admin / admin123)
 docker compose exec backend node seedAdmin.js
 ```
 
@@ -39,6 +42,7 @@ If you need to completely reset the database to a clean seed state (e.g. to reso
 ```bash
 docker compose down -v
 docker compose up -d --build
+docker compose exec backend npx prisma db push
 docker compose exec backend npm run db:seed
 docker compose exec backend node seedAdmin.js
 ```
