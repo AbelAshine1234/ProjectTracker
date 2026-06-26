@@ -30,6 +30,6 @@ docker compose exec backend node seedAdmin.js
 Default admin credentials: `admin` / `admin123`
 
 ### Included Features
-- Completely styled based on `style.md` and `physicsandanimation.md`.
+- Completely styled based on `docs/02-design-system.md` and `docs/06-animation-spec.md`.
 - Implemented common components (`<DataTable/>`, `<Modal/>`, `<StatCard/>`, etc.)
 - Redux Store seeded with the architecture spec (Platforms, Mobile Apps, Bugs, Feature Requests, Users).
