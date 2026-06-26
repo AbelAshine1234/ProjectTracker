@@ -28,12 +28,15 @@ export function BugReportDetailView({ bugId, onSelect }) {
   const [draftImage, setDraftImage] = useState('');
 
   const [modalState, setModalState] = useState({ isOpen: false, type: 'info', title: '', message: '', onConfirm: null });
+  const projectId = useSelector(s => s.project.data?.id);
 
   useEffect(() => {
-    dispatch(fetchStatuses({ projectId: 1, type: 'bug' }));
-    dispatch(fetchSeverities(1));
+    if (projectId) {
+      dispatch(fetchStatuses({ projectId, type: 'bug' }));
+      dispatch(fetchSeverities(projectId));
+    }
     dispatch(fetchUsers());
-  }, [dispatch]);
+  }, [dispatch, projectId]);
 
   useEffect(() => {
     if (bug) {

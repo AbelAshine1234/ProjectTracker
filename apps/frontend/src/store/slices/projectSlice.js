@@ -4,14 +4,20 @@ import { apiFetch } from '@/lib/api';
 export const fetchProjectData = createAsyncThunk(
   'project/fetchProjectData',
   async () => {
-    return await apiFetch('/projects/1');
+    const projects = await apiFetch('/projects');
+    if (!projects || projects.length === 0) {
+      throw new Error('No projects found');
+    }
+    // Fetch the full project with all relations
+    return await apiFetch(`/projects/${projects[0].id}`);
   }
 );
 
 export const updateProjectField = createAsyncThunk(
   'project/updateProjectField',
   async ({ field, value }, { getState }) => {
-    const projectId = getState().project.data?.id || 1;
+    const projectId = getState().project.data?.id;
+    if (!projectId) throw new Error('No project loaded');
     const updated = await apiFetch(`/projects/${projectId}`, {
       method: 'PUT',
       body: JSON.stringify({ [field]: value }),
@@ -24,7 +30,7 @@ export const updateProjectField = createAsyncThunk(
 export const addResourceLink = createAsyncThunk(
   'project/addResourceLink',
   async (linkData, { getState }) => {
-    const projectId = getState().project.data?.id || 1;
+    const projectId = getState().project.data?.id;
     const link = await apiFetch(`/projects/${projectId}/resource-links`, {
       method: 'POST',
       body: JSON.stringify(linkData),
@@ -36,7 +42,7 @@ export const addResourceLink = createAsyncThunk(
 export const updateResourceLink = createAsyncThunk(
   'project/updateResourceLink',
   async ({ linkId, data }, { getState }) => {
-    const projectId = getState().project.data?.id || 1;
+    const projectId = getState().project.data?.id;
     const link = await apiFetch(`/projects/${projectId}/resource-links/${linkId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -48,7 +54,7 @@ export const updateResourceLink = createAsyncThunk(
 export const deleteResourceLink = createAsyncThunk(
   'project/deleteResourceLink',
   async (linkId, { getState }) => {
-    const projectId = getState().project.data?.id || 1;
+    const projectId = getState().project.data?.id;
     await apiFetch(`/projects/${projectId}/resource-links/${linkId}`, {
       method: 'DELETE',
     });
@@ -60,7 +66,7 @@ export const deleteResourceLink = createAsyncThunk(
 export const addGitRepo = createAsyncThunk(
   'project/addGitRepo',
   async (repoData, { getState }) => {
-    const projectId = getState().project.data?.id || 1;
+    const projectId = getState().project.data?.id;
     const repo = await apiFetch(`/projects/${projectId}/git-repos`, {
       method: 'POST',
       body: JSON.stringify(repoData),
@@ -72,7 +78,7 @@ export const addGitRepo = createAsyncThunk(
 export const updateGitRepo = createAsyncThunk(
   'project/updateGitRepo',
   async ({ repoId, data }, { getState }) => {
-    const projectId = getState().project.data?.id || 1;
+    const projectId = getState().project.data?.id;
     const repo = await apiFetch(`/projects/${projectId}/git-repos/${repoId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -84,7 +90,7 @@ export const updateGitRepo = createAsyncThunk(
 export const deleteGitRepo = createAsyncThunk(
   'project/deleteGitRepo',
   async (repoId, { getState }) => {
-    const projectId = getState().project.data?.id || 1;
+    const projectId = getState().project.data?.id;
     await apiFetch(`/projects/${projectId}/git-repos/${repoId}`, {
       method: 'DELETE',
     });
@@ -96,7 +102,7 @@ export const deleteGitRepo = createAsyncThunk(
 export const addSupplementaryDoc = createAsyncThunk(
   'project/addSupplementaryDoc',
   async (docData, { getState }) => {
-    const projectId = getState().project.data?.id || 1;
+    const projectId = getState().project.data?.id;
     const doc = await apiFetch(`/projects/${projectId}/supplementary-docs`, {
       method: 'POST',
       body: JSON.stringify(docData),
@@ -108,7 +114,7 @@ export const addSupplementaryDoc = createAsyncThunk(
 export const updateSupplementaryDoc = createAsyncThunk(
   'project/updateSupplementaryDoc',
   async ({ docId, data }, { getState }) => {
-    const projectId = getState().project.data?.id || 1;
+    const projectId = getState().project.data?.id;
     const doc = await apiFetch(`/projects/${projectId}/supplementary-docs/${docId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -120,7 +126,7 @@ export const updateSupplementaryDoc = createAsyncThunk(
 export const deleteSupplementaryDoc = createAsyncThunk(
   'project/deleteSupplementaryDoc',
   async (docId, { getState }) => {
-    const projectId = getState().project.data?.id || 1;
+    const projectId = getState().project.data?.id;
     await apiFetch(`/projects/${projectId}/supplementary-docs/${docId}`, {
       method: 'DELETE',
     });

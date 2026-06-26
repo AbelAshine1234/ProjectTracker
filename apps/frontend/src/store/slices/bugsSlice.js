@@ -5,8 +5,9 @@ import { apiFetch } from '@/lib/api';
 
 export const fetchBugs = createAsyncThunk(
   'bugs/fetchBugs',
-  async (projectId = 1) => {
-    return await apiFetch(`/bugs/project/${projectId}`);
+  async (projectId, { getState }) => {
+    const activeProjectId = projectId || getState().project.data?.id;
+    return await apiFetch(`/bugs/project/${activeProjectId}`);
   }
 );
 

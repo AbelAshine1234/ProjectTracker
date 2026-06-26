@@ -12,6 +12,7 @@ export function FeatureRequestSection({ platformId, onSelect }) {
   const platform = useSelector(s => s.platforms.items.find(p => p.id === platformId));
   const allRequests = useSelector(s => s.features.items);
   const requests = useMemo(() => allRequests.filter(f => f.platformId === platformId), [allRequests, platformId]);
+  const projectId = useSelector(s => s.project.data?.id);
   const { editing } = useEdit();
   const requestStatuses = useSelector(s => s.statuses.byType.request) || [];
   const [statusDrafts, setStatusDrafts] = useState({});
@@ -24,7 +25,7 @@ export function FeatureRequestSection({ platformId, onSelect }) {
   const [modalState, setModalState] = useState({ isOpen: false, type: 'info', title: '', message: '', onConfirm: null });
 
   useEffect(() => {
-    dispatch(fetchStatuses({ projectId: 1, type: 'request' }));
+    if (projectId) dispatch(fetchStatuses({ projectId, type: 'request' }));
     dispatch(fetchFeatureRequests(platformId));
   }, [dispatch, platformId]);
 
@@ -71,7 +72,7 @@ export function FeatureRequestSection({ platformId, onSelect }) {
     const defaultStatus = requestStatuses.find(s => s.isDefault) || requestStatuses[0];
     try {
       await dispatch(createFeatureRequest({
-        projectId: 1,
+        projectId,
         platformId: platform.id,
         title: newReqTitle,
         description: newReqDesc,

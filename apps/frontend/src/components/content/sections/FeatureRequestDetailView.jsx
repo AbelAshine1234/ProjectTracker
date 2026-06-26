@@ -19,10 +19,11 @@ export function FeatureRequestDetailView({ requestId, onSelect }) {
   const [draftImage, setDraftImage] = useState('');
 
   const [modalState, setModalState] = useState({ isOpen: false, type: 'info', title: '', message: '', onConfirm: null });
+  const projectId = useSelector(s => s.project.data?.id);
 
   useEffect(() => {
-    dispatch(fetchStatuses({ projectId: 1, type: 'request' }));
-  }, [dispatch]);
+    if (projectId) dispatch(fetchStatuses({ projectId, type: 'request' }));
+  }, [dispatch, projectId]);
 
   useEffect(() => {
     if (req) {

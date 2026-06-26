@@ -14,6 +14,7 @@ export default function PlatformsPage() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
   const { items: platforms, status } = useSelector(s => s.platforms);
+  const projectId = useSelector(s => s.project.data?.id);
   
   const [showAddPlatform, setShowAddPlatform] = useState(false);
   const [newPlatformName, setNewPlatformName] = useState('');
@@ -24,14 +25,14 @@ export default function PlatformsPage() {
 
   useEffect(() => {
     if (status === 'idle') {
-      dispatch(fetchPlatforms(1)); // Assuming projectId is 1
+      if (projectId) dispatch(fetchPlatforms(projectId));
     }
   }, [status, dispatch]);
 
   const handleAddPlatform = async () => {
     if (!newPlatformName.trim()) return;
     await dispatch(createPlatform({
-      projectId: 1, // Defaulting to 1 as it's the ecosystem
+      projectId,
       name: newPlatformName,
       slug: newPlatformName.toLowerCase().replace(/\s+/g, '-'),
       type: 'web',
@@ -50,7 +51,7 @@ export default function PlatformsPage() {
   const handleAddFeature = async () => {
     if (!newFeatureName.trim() || !selectedPlatformId) return;
     await dispatch(createFeature({
-      projectId: 1,
+      projectId,
       platformId: Number(selectedPlatformId),
       title: newFeatureName,
       description: 'New feature',

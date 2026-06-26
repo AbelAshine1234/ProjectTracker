@@ -9,6 +9,7 @@ import { ReviewStatusBadge } from '@/components/common/EntityWidgets';
 export function GranularPlatformSection({ platformId, onSelect }) {
   const dispatch = useDispatch();
   const platform = useSelector(s => s.platforms.items.find(p => p.id === platformId));
+  const projectId = useSelector(s => s.project.data?.id);
   const { editing } = useEdit();
 
   const [showAddFeature, setShowAddFeature] = useState(false);
@@ -46,7 +47,7 @@ export function GranularPlatformSection({ platformId, onSelect }) {
   const handleAddFeature = async () => {
     if (!newFeatureTitle.trim()) return;
     await dispatch(createFeature({
-      projectId: 1,
+      projectId,
       platformId: platform.id,
       title: newFeatureTitle,
       description: newFeatureDesc,

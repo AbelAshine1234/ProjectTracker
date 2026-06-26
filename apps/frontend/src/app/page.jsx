@@ -77,17 +77,23 @@ export default function HomePage() {
   }, [editing, currentUser, activeSection]);
 
   const dispatch = useDispatch();
+  const projectData = useSelector(s => s.project.data);
 
   useEffect(() => {
     if (!currentUser && authStatus !== 'loading') {
       router.replace('/login');
     } else if (currentUser) {
-      dispatch(fetchPlatforms(1));
-      dispatch(fetchBugs(1));
-      dispatch(fetchFeatureRequests(1));
       dispatch(fetchProjectData());
     }
   }, [currentUser, authStatus, router, dispatch]);
+
+  useEffect(() => {
+    if (projectData?.id) {
+      dispatch(fetchPlatforms(projectData.id));
+      dispatch(fetchBugs(projectData.id));
+      dispatch(fetchFeatureRequests(projectData.id));
+    }
+  }, [projectData?.id, dispatch]);
 
   if (!currentUser) return null;
 

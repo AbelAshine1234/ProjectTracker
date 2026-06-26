@@ -8,12 +8,13 @@ A fully Dockerized Next.js (Frontend) and Express/Node.js (Backend) application 
 - **Backend:** Node.js Express API.
 - **Database:** PostgreSQL & Redis (provisioned via Docker Compose).
 
-## Running the Application
+> [!IMPORTANT]
+> This application requires **Docker Compose V2 plugin** (`docker compose` CLI plugin). Older Python-based `docker-compose` (V1) is not supported and will result in build-time / container config errors.
 
 Everything runs inside Docker.
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 - **Frontend UI:** `http://localhost:3000`
