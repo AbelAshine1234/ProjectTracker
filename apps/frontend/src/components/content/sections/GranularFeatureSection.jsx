@@ -13,6 +13,7 @@ export function GranularFeatureSection({ featureId, onSelect }) {
   const dispatch = useDispatch();
   const platforms = useSelector(s => s.platforms.items);
   const users = useSelector(s => s.users.items);
+  const projectId = useSelector(s => s.project.data?.id);
   const { editing } = useEdit();
 
   let feature, platform;
@@ -33,7 +34,7 @@ export function GranularFeatureSection({ featureId, onSelect }) {
   const taskStatuses = useSelector(s => s.statuses.byType.task) || [];
   
   useEffect(() => {
-    dispatch(fetchStatuses({ projectId: 1, type: 'task' }));
+    if (projectId) dispatch(fetchStatuses({ projectId, type: 'task' }));
     dispatch(fetchUsers());
   }, [dispatch]);
 
@@ -59,7 +60,7 @@ export function GranularFeatureSection({ featureId, onSelect }) {
     if (!newSubTask.trim()) return;
     const defaultStatus = taskStatuses.find(s => s.isDefault) || taskStatuses[0];
     await dispatch(createSubTask({
-      projectId: 1,
+      projectId,
       featureId: feature.id,
       title: newSubTask,
       statusId: defaultStatus?.id || 1,

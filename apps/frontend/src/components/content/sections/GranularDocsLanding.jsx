@@ -9,6 +9,7 @@ import Modal from '@/components/common/Modal';
 export function GranularDocsLanding({ onSelect }) {
   const dispatch = useDispatch();
   const platforms = useSelector(s => s.platforms.items) || [];
+  const projectId = useSelector(s => s.project.data?.id);
   const { editing } = useEdit();
   const [showAdd, setShowAdd] = useState(false);
   const [newName, setNewName] = useState('');
@@ -16,7 +17,7 @@ export function GranularDocsLanding({ onSelect }) {
   const handleAdd = async () => {
     if (!newName.trim()) return;
     await dispatch(createPlatform({
-      projectId: 1,
+      projectId,
       name: newName,
       slug: newName.toLowerCase().replace(/\s+/g, '-'),
       type: 'web',

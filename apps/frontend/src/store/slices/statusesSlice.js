@@ -5,21 +5,23 @@ import { apiFetch } from '@/lib/api';
 
 export const fetchStatuses = createAsyncThunk(
   'statuses/fetchStatuses',
-  async ({ projectId = 1, type }, { getState }) => {
+  async ({ projectId, type } = {}, { getState }) => {
+    const activeProjectId = projectId || getState().project.data?.id;
     // Skip if already loaded for this type
     const existing = getState().statuses.byType[type];
     if (existing && existing.length > 0) return { type, items: existing };
-    const items = await apiFetch(`/statuses/project/${projectId}?type=${type}`);
+    const items = await apiFetch(`/statuses/project/${activeProjectId}?type=${type}`);
     return { type, items };
   }
 );
 
 export const fetchSeverities = createAsyncThunk(
   'statuses/fetchSeverities',
-  async (projectId = 1, { getState }) => {
+  async (projectId, { getState }) => {
+    const activeProjectId = projectId || getState().project.data?.id;
     const existing = getState().statuses.severities;
     if (existing && existing.length > 0) return existing;
-    return await apiFetch(`/severities/project/${projectId}`);
+    return await apiFetch(`/severities/project/${activeProjectId}`);
   }
 );
 

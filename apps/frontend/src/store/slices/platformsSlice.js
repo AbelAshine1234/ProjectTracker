@@ -8,8 +8,9 @@ import { addQAStory } from '@/store/slices/qaSlice';
 
 export const fetchPlatforms = createAsyncThunk(
   'platforms/fetchPlatforms',
-  async (projectId = 1) => {
-    return await apiFetch(`/platforms/project/${projectId}`);
+  async (projectId, { getState }) => {
+    const activeProjectId = projectId || getState().project.data?.id;
+    return await apiFetch(`/platforms/project/${activeProjectId}`);
   }
 );
 

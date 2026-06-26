@@ -10,6 +10,7 @@ export function ActiveBugsSection({ onSelect }) {
   const dispatch = useDispatch();
   const bugs = useSelector(s => s.bugs.items);
   const platforms = useSelector(s => s.platforms.items) || [];
+  const projectId = useSelector(s => s.project.data?.id);
   const [showNew, setShowNew] = useState(false);
   const statuses = useSelector(s => s.statuses.byType.bug) || [];
   const severities = useSelector(s => s.statuses.severities) || [];
@@ -24,8 +25,10 @@ export function ActiveBugsSection({ onSelect }) {
   const [modalState, setModalState] = useState({ isOpen: false, type: 'info', title: '', message: '', onConfirm: null });
 
   useEffect(() => {
-    dispatch(fetchStatuses({ projectId: 1, type: 'bug' }));
-    dispatch(fetchSeverities(1));
+    if (projectId) {
+      dispatch(fetchStatuses({ projectId, type: 'bug' }));
+      dispatch(fetchSeverities(projectId));
+    }
   }, [dispatch]);
 
   const setField = (k, v) => setForm(f => ({ ...f, [k]: v }));

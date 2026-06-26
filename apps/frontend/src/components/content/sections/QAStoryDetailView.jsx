@@ -13,11 +13,12 @@ export function QAStoryDetailView({ storyId, onSelect }) {
   const users = useSelector(s => s.users.items) || [];
   const statuses = useSelector(s => s.statuses.byType.qa) || [];
   const [statusDraft, setStatusDraft] = useState(null);
+  const projectId = useSelector(s => s.project.data?.id);
 
   useEffect(() => {
     dispatch(fetchUsers());
-    dispatch(fetchStatuses({ projectId: 1, type: 'qa' }));
-  }, [dispatch]);
+    if (projectId) dispatch(fetchStatuses({ projectId, type: 'qa' }));
+  }, [dispatch, projectId]);
 
   if (!story) return <p>Loading...</p>;
 

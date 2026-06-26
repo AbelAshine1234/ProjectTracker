@@ -25,12 +25,13 @@ export function QAPlatformSection({ platformId, onSelect }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const [modalState, setModalState] = useState({ isOpen: false, type: 'info', title: '', message: '', onConfirm: null });
+  const projectId = useSelector(s => s.project.data?.id);
 
   useEffect(() => {
     dispatch(fetchQAByPlatform(platformId));
-    dispatch(fetchStatuses({ projectId: 1, type: 'qa' }));
+    if (projectId) dispatch(fetchStatuses({ projectId, type: 'qa' }));
     dispatch(fetchUsers());
-  }, [dispatch, platformId]);
+  }, [dispatch, platformId, projectId]);
 
   if (!platform) return null;
 

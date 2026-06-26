@@ -10,12 +10,13 @@ import Button from '@/components/common/Button';
 export default function BugsPage() {
   const dispatch = useDispatch();
   const { items: bugs, status } = useSelector(s => s.bugs);
+  const projectId = useSelector(s => s.project.data?.id);
 
   useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchBugs(1)); // Fetch bugs for a default platform, or perhaps fetch all bugs if the backend supports it
+    if (status === 'idle' && projectId) {
+      dispatch(fetchBugs(projectId));
     }
-  }, [status, dispatch]);
+  }, [status, dispatch, projectId]);
 
   const columns = [
     { label: 'BUG TITLE', key: 'title', render: (val) => <span style={{ fontWeight: 500 }}>{val}</span> },
